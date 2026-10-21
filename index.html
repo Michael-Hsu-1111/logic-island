@@ -113,7 +113,7 @@ h3{margin:.9rem 0 .2rem;font-size:1.05rem}
 .tb{width:100%;border-collapse:collapse;margin:.4rem 0;font-size:.95rem}.tb th,.tb td{border:2px solid var(--line);padding:.35rem .5rem;text-align:left}.tb th{background:var(--slot)}
 .bars{display:flex;gap:1.2rem;align-items:flex-end;height:9rem;border-bottom:3px solid var(--line);margin:.6rem 0 .2rem;padding:0 .5rem}.bar{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}.bar i{display:block;width:60%;background:var(--blue);border-radius:8px 8px 0 0}.bar b{font-size:.85rem;text-align:center;margin-top:.2rem}
 .nbrow{display:flex;gap:.4rem;align-items:center;margin:.2rem 0}.nbrow span{min-width:3.6rem;font-weight:700}.chip.on{background:var(--ok);color:#fff;border-color:var(--ok)}
-.shoprow{display:flex;gap:.6rem;align-items:center;justify-content:space-between;border:2px solid var(--line);border-radius:var(--r-md);padding:.6rem .8rem;margin:.45rem 0;background:#fff}.shoprow .sd{font-size:1rem;color:var(--mute);line-height:1.45}.shoprow .b{flex:none;min-width:5.5rem}
+.shoprow .tt{display:flex;flex-wrap:wrap;align-items:center;gap:.2rem .5rem;font-size:1.1rem}.shoprow .lvb{display:inline-block;white-space:nowrap;font-size:.8rem;font-weight:800;line-height:1;padding:.28rem .6rem;border-radius:999px;background:#f4e9c9;border:1px solid #e3d3a2;color:var(--ink)}.shoprow .en2{font-size:.78rem;color:var(--mute);margin:.1rem 0 .2rem}.shoprow>button{flex:none;min-width:5.4rem;white-space:nowrap}.shoprow{display:flex;gap:.6rem;align-items:center;justify-content:space-between;border:2px solid var(--line);border-radius:var(--r-md);padding:.6rem .8rem;margin:.45rem 0;background:#fff}.shoprow .sd{font-size:1rem;color:var(--mute);line-height:1.45}.shoprow .b{flex:none;min-width:5.5rem}
 body.mapon #ov{background:rgba(20,25,50,.55);backdrop-filter:blur(2px)}
 .act .b.sm{min-height:2.9rem}
 .qbt button{width:3.7rem!important;height:3.7rem!important;font-size:1.35rem!important;line-height:1.05;display:flex;flex-direction:column;align-items:center;justify-content:center}.qbt button small{display:block;font-size:.62rem;font-weight:800;margin-top:.1rem}
@@ -9520,7 +9520,7 @@ function itemPrice(x){return Math.round(x.base*Math.pow(1.7,itl(x.id)))}
 function shopPanel(){
  var c=qn("coin"),h='<div class="top"><b>🛍️ 寶物商店 Treasure Shop</b><button class="b g sm" data-a="close">回地圖 Map</button></div><div class="tip">你有 <b>'+c+'</b> 🪙。想買什麼？買愈多級，價錢愈貴。先想想：哪一個對我最有幫助？</div>';
  ITEMS.forEach(function(x){var lv=itl(x.id),mx=lv>=x.max,pr=itemPrice(x);
-  h+='<div class="shoprow"><div style="min-width:0"><b>'+x.e+' '+x.n+' <span class="en">'+x.en+'</span></b> <span class="chip">Lv '+lv+' / '+x.max+'</span><div class="sd">'+x.d+'</div></div><button class="b'+(mx?' ok':c>=pr?'':' g')+'" data-a="qm_buy" data-i="'+x.id+'"'+((mx||c<pr)?' disabled':'')+'>'+(mx?'已滿級':'🪙 '+pr)+'</button></div>'});
+  h+='<div class="shoprow"><div style="min-width:0;flex:1"><div class="tt"><b>'+x.e+' '+x.n+'</b><span class="lvb">Lv '+lv+' / '+x.max+'</span></div><div class="en2">'+x.en+'</div><div class="sd">'+x.d+'</div></div><button class="b'+(mx?' ok':c>=pr?'':' g')+'" data-a="qm_buy" data-i="'+x.id+'"'+((mx||c<pr)?' disabled':'')+'>'+(mx?'已滿級':'🪙 '+pr)+'</button></div>'});
  openP(h)}
 var WORDCARD=WORDS.filter(function(w){return w[2]<=8});
 function templePanel(){
