@@ -111,6 +111,9 @@ h3{margin:.9rem 0 .2rem;font-size:1.05rem}
 #rem{position:fixed;left:50%;transform:translateX(-50%);top:10px;z-index:40;background:#2b2a3a;color:#fff;border-radius:var(--r-md);padding:.7rem 1rem;max-width:92%;font-size:.95rem;text-align:center;box-shadow:var(--sh)}
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#2b2a3a;color:#fff;padding:.6rem 1rem;border-radius:999px;font-size:.95rem;z-index:50;max-width:92%;text-align:center}
 .conf{position:fixed;top:-20px;width:.7rem;height:1.1rem;z-index:60;animation:fall 1.8s ease-in forwards;pointer-events:none}
+.tb{width:100%;border-collapse:collapse;margin:.4rem 0;font-size:.95rem}.tb th,.tb td{border:2px solid var(--line);padding:.35rem .5rem;text-align:left}.tb th{background:var(--slot)}
+.bars{display:flex;gap:1.2rem;align-items:flex-end;height:9rem;border-bottom:3px solid var(--line);margin:.6rem 0 .2rem;padding:0 .5rem}.bar{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}.bar i{display:block;width:60%;background:var(--blue);border-radius:8px 8px 0 0}.bar b{font-size:.85rem;text-align:center;margin-top:.2rem}
+.nbrow{display:flex;gap:.4rem;align-items:center;margin:.2rem 0}.nbrow span{min-width:3.6rem;font-weight:700}.chip.on{background:var(--ok);color:#fff;border-color:var(--ok)}
 .en{font-size:.72em;opacity:.75;font-weight:600;margin-left:.25em}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -141,6 +144,7 @@ h3{margin:.9rem 0 .2rem;font-size:1.05rem}
   </div>
   <div class="guide"><div id="gowl"></div><div class="bubble" id="gtext"></div></div>
   <button class="b ok big" id="bdaily">▶ 今日冒險 <span class="en">Daily Adventure</span></button>
+  <button class="b blue big" id="bdc" style="margin-top:.6rem">🔥 每日挑戰 <span class="en">Daily Challenge</span></button>
   <div class="path" id="path"></div>
  </div>
 
@@ -151,8 +155,9 @@ h3{margin:.9rem 0 .2rem;font-size:1.05rem}
 <script>
 (function(){
 var $=function(i){return document.getElementById(i)};
+var RNG=Math.random;function seedRNG(s){var a=s>>>0;RNG=function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}function unseedRNG(){RNG=Math.random}
 /* ===== 無限出題 v4（白話版，答案位置與正解不再有規律）：10 級 ≈ 國小低年級 → 國中進階／高中入門（持續擴充） ===== */
-function R(a,b){return a+Math.floor(Math.random()*(b-a+1))}
+function R(a,b){return a+Math.floor(RNG()*(b-a+1))}
 function pick(a){return a[R(0,a.length-1)]}
 function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=R(0,i),t=a[i];a[i]=a[j];a[j]=t}return a}
 function gcd(a,b){return b?gcd(b,a%b):Math.abs(a)}
@@ -186,11 +191,11 @@ var G={};
 G.seq=function(L){
  var a,d,s,n,ans;
  if(L<=1){
-  if(Math.random()<.35){a=R(20,40);d=R(2,4);s=[a,a-d,a-2*d,a-3*d];ans=a-4*d;return mk("數列",s.join("、")+"、？　問號是哪個數字？",ans,[ans+d,ans-1,ans+1],"每次都少 "+d+"："+s[3]+" － "+d+" ＝ "+ans+"。")}
+  if(RNG()<.35){a=R(20,40);d=R(2,4);s=[a,a-d,a-2*d,a-3*d];ans=a-4*d;return mk("數列",s.join("、")+"、？　問號是哪個數字？",ans,[ans+d,ans-1,ans+1],"每次都少 "+d+"："+s[3]+" － "+d+" ＝ "+ans+"。")}
   a=R(1,10);d=R(2,5);s=[a,a+d,a+2*d,a+3*d];ans=a+4*d;
   return mk("數列",s.join("、")+"、？　問號是哪個數字？",ans,[ans+1,ans-1,ans+d],"每次都多 "+d+"："+s[3]+" ＋ "+d+" ＝ "+ans+"。")}
  if(L===2){
-  if(Math.random()<.5){a=R(1,4);d=R(2,3);s=[a,a*d,a*d*d,a*d*d*d];ans=s[3]*d;
+  if(RNG()<.5){a=R(1,4);d=R(2,3);s=[a,a*d,a*d*d,a*d*d*d];ans=s[3]*d;
    return mk("數列",s.join("、")+"、？　問號是哪個數字？",ans,[ans+d,ans-d,s[3]+d],"每次都變成 "+d+" 倍："+s[3]+" × "+d+" ＝ "+ans+"。")}
   a=R(35,60);d=R(3,7);s=[a,a-d,a-2*d,a-3*d];ans=a-4*d;
   return mk("數列",s.join("、")+"、？　問號是哪個數字？",ans,[ans+2*d,ans-d,ans+1],"每次都少 "+d+"："+s[3]+" － "+d+" ＝ "+ans+"。")}
@@ -207,10 +212,10 @@ G.seq=function(L){
  if(L===8){n=2*R(10,50);ans=n*(n+1)/2;
   return mk("數列","1 ＋ 2 ＋ 3 ＋ … ＋ "+n+" ＝ ？（提示：頭尾兩個先配成一對）",ans,[n*(n-1)/2,n*(n+1),n*n/2+1],"頭尾配對：1 ＋ "+n+" ＝ "+(n+1)+"，2 ＋ "+(n-1)+" ＝ "+(n+1)+"……每一對都是 "+(n+1)+"，一共有 "+n+" ÷ 2 ＝ "+(n/2)+" 對。所以是 "+(n/2)+" × "+(n+1)+" ＝ "+ans+"。")}
  if(L===9){n=R(5,9);
-  if(Math.random()<.5){ans=Math.pow(2,n+1)-1;return mk("數列","把 1、2、4、8、… 一直加到 "+Math.pow(2,n)+"（每次變成 2 倍）：1 ＋ 2 ＋ 4 ＋ … ＋ "+Math.pow(2,n)+" ＝ ？",ans,[Math.pow(2,n+1),Math.pow(2,n)-1,Math.pow(2,n+1)+1],"每一個數字，都比「前面全部加起來」多 1。所以全部加起來，是最後一個數字的 2 倍再少 1："+Math.pow(2,n)+" × 2 － 1 ＝ "+ans+"。")}
+  if(RNG()<.5){ans=Math.pow(2,n+1)-1;return mk("數列","把 1、2、4、8、… 一直加到 "+Math.pow(2,n)+"（每次變成 2 倍）：1 ＋ 2 ＋ 4 ＋ … ＋ "+Math.pow(2,n)+" ＝ ？",ans,[Math.pow(2,n+1),Math.pow(2,n)-1,Math.pow(2,n+1)+1],"每一個數字，都比「前面全部加起來」多 1。所以全部加起來，是最後一個數字的 2 倍再少 1："+Math.pow(2,n)+" × 2 － 1 ＝ "+ans+"。")}
   ans=(Math.pow(3,n+1)-1)/2;return mk("數列","把 1、3、9、27、… 一直加到 "+Math.pow(3,n)+"（每次變成 3 倍）：1 ＋ 3 ＋ 9 ＋ … ＋ "+Math.pow(3,n)+" ＝ ？",ans,[Math.pow(3,n+1),Math.pow(3,n)-1,ans+1],"最後一個數字的 3 倍，減 1，再除以 2：("+Math.pow(3,n)+" × 3 － 1) ÷ 2 ＝ "+ans+"。")}
  n=R(6,8);
- if(Math.random()<.5){ans=Math.pow(2,n)-1;return mk("數列","有一排數字：第 1 個是 1，後面每個都是「前一個乘 2，再加 1」。第 "+n+" 個數字是多少？",ans,[Math.pow(2,n),Math.pow(2,n)+1,Math.pow(2,n-1)],"依序是 1、3、7、15、31……每個數字加 1，就變成 2、4、8、16、32……所以第 "+n+" 個數字加 1 是 "+Math.pow(2,n)+"，答案是 "+Math.pow(2,n)+" － 1 ＝ "+ans+"。")}
+ if(RNG()<.5){ans=Math.pow(2,n)-1;return mk("數列","有一排數字：第 1 個是 1，後面每個都是「前一個乘 2，再加 1」。第 "+n+" 個數字是多少？",ans,[Math.pow(2,n),Math.pow(2,n)+1,Math.pow(2,n-1)],"依序是 1、3、7、15、31……每個數字加 1，就變成 2、4、8、16、32……所以第 "+n+" 個數字加 1 是 "+Math.pow(2,n)+"，答案是 "+Math.pow(2,n)+" － 1 ＝ "+ans+"。")}
  ans=n*n+n;return mk("數列","有一排數字：第 1 個是 1×1＋1＝2，第 2 個是 2×2＋2＝6，第 3 個是 3×3＋3＝12……第 "+n+" 個數字是多少？",ans,[n*n,n*n+n+1,(n+1)*(n+1)],"第 "+n+" 個是 "+n+" × "+n+" ＋ "+n+" ＝ "+ans+"。");
 };
 G.alg=function(L){
@@ -224,10 +229,10 @@ G.alg=function(L){
  if(L===7){x=R(3,15);return mk("代數","有一個比 0 大的數字，自己乘自己，等於 "+(x*x)+"。這個數是多少？",x,[x*x,x+1,x-1],x+" × "+x+" ＝ "+(x*x)+"。")}
  if(L===8){a=R(1,6);b=R(a+1,9);return mk("代數","兩個數字相乘是 0，那至少有一個數字是 0。現在「(x－"+a+") 乘 (x－"+b+") 等於 0」，所以 x－"+a+" ＝ 0，或 x－"+b+" ＝ 0。x 可以是兩個數，把這兩個數相加是多少？",a+b,[a*b,b-a,a+b+1],"x 可以是 "+a+" 或 "+b+"，相加是 "+(a+b)+"。")}
  if(L===9){
-  if(Math.random()<.5){a=pick([10,20,25,30,40]);ans=100-a*a/100;return mk("代數","一件商品先漲價 "+a+"%，再降價 "+a+"%。現在的價格是原價的百分之幾？",fm(ans)+"%",["100%",(100-a)+"%",(100+a)+"%"],"想成原價 100 元：先漲 "+a+" 元變成 "+(100+a)+" 元。再降價，是從「"+(100+a)+" 元」來降 "+a+"%，少 "+fm((100+a)*a/100)+" 元，變成 "+fm((100+a)*(100-a)/100)+" 元。降價是從比較大的數字來減，少掉的比較多，所以回不到 100。")}
+  if(RNG()<.5){a=pick([10,20,25,30,40]);ans=100-a*a/100;return mk("代數","一件商品先漲價 "+a+"%，再降價 "+a+"%。現在的價格是原價的百分之幾？",fm(ans)+"%",["100%",(100-a)+"%",(100+a)+"%"],"想成原價 100 元：先漲 "+a+" 元變成 "+(100+a)+" 元。再降價，是從「"+(100+a)+" 元」來降 "+a+"%，少 "+fm((100+a)*a/100)+" 元，變成 "+fm((100+a)*(100-a)/100)+" 元。降價是從比較大的數字來減，少掉的比較多，所以回不到 100。")}
   a=R(2,6);b=R(a+1,9);return mk("代數","有兩個數字，相加是 "+(a+b)+"，相乘是 "+(a*b)+"。比較大的那個數字是多少？",b,[a,a+b,a*b],"試試看：哪兩個數字相加是 "+(a+b)+"、相乘是 "+(a*b)+"？是 "+a+" 和 "+b+"，大的是 "+b+"。")}
  var v=pick([1,2,3]);
- if(v===1){var pp=pick([[30,60],[20,30],[60,120],[40,60],[30,120],[20,60],[40,120]]);if(Math.random()<.5)pp=[pp[1],pp[0]];a=pp[0];b=pp[1];ans=2*a*b/(a+b);
+ if(v===1){var pp=pick([[30,60],[20,30],[60,120],[40,60],[30,120],[20,60],[40,120]]);if(RNG()<.5)pp=[pp[1],pp[0]];a=pp[0];b=pp[1];ans=2*a*b/(a+b);
   return mk("代數","去程時速 "+a+" 公里，回程時速 "+b+" 公里（來回路程一樣）。來回的平均時速是多少公里？",ans,[(a+b)/2,ans+3,ans-3],"平均時速是「總路程 ÷ 總時間」，不是把時速相加再除以 2。假設單程 "+a*b+" 公里：去程要 "+(a*b/a)+" 小時，回程要 "+(a*b/b)+" 小時，來回 "+2*a*b+" 公里，一共 "+(a*b/a+a*b/b)+" 小時。"+2*a*b+" ÷ "+(a*b/a+a*b/b)+" ＝ "+ans+"。")}
  if(v===2){a=R(2,5);var k=R(8,20);ans=Math.ceil(k/a)-1;return mk("代數","「"+a+" 乘 x，要小於 "+k+"」。x 是正整數（1、2、3…），x 有幾種可能？",ans,[ans+1,ans-1,Math.floor(k/a)+1],"x 要小於 "+k+" ÷ "+a+" ＝ "+fm(k/a)+"，所以 x 可以是 1 到 "+ans+"，共 "+ans+" 種。")}
  a=R(2,6);b=a*a+R(1,9);
@@ -281,7 +286,7 @@ var PROM=[
  ["爸爸說：「如果明天天氣好，我就帶你去公園。」","爸爸","明天天氣好","明天天氣不好","爸爸帶你去了公園","爸爸沒有帶你去公園"],
  ["老師說：「如果大家都很安靜，我就講故事。」","老師","大家都很安靜","大家吵吵鬧鬧","老師講了故事","老師沒有講故事"],
  ["哥哥說：「如果你借我橡皮擦，我就請你吃糖。」","哥哥","你借了橡皮擦給他","你沒有借橡皮擦給他","哥哥請你吃了糖","哥哥沒有請你吃糖"]];
-function promPick(){if(Math.random()<.5)return [true,false];return pick([[true,true],[false,true],[false,false]])}
+function promPick(){if(RNG()<.5)return [true,false];return pick([[true,true],[false,true],[false,false]])}
 function promQ(m,P,Qv){return m[0]+"　結果："+(P?m[2]:m[3])+"，"+(Qv?m[4]:m[5])+"。"+m[1]+"有沒有說到做到？"}
 function promA(m,P,Qv){return (P&&!Qv)?"沒有說到做到":"有說到做到"}
 function promW(m,P,Qv){return (P&&!Qv)?m[1]+"說了「如果…就…」，前面做到了，後面卻沒做到，所以沒有說到做到。":P?"前面做到了，後面也做到了，說到做到。":m[1]+"只說了「"+m[2]+"」的時候會怎樣，沒說「"+m[3]+"」的時候會怎樣。所以不能說他沒有說到做到。"}
@@ -289,19 +294,19 @@ G.cond=function(L){
  var p=pick(CP),AS="（假設大人說的話都算數。）";
  function ask(x){return "「"+x+"」這句話，一定是對的嗎？"}
  function form(t){ // t: 0 前半發生 1 後半沒發生 2 後半發生 3 前半沒發生
-  if(t===0){var useQ=Math.random()<.5;return useQ?mk("條件推理",AS+p.r+"　"+p.p+"。"+ask(p.q),"一定對",["一定不對","不一定"],"因為有「如果…就…」這句話，前面的事發生了，後面的事就一定會發生。"):mk("條件推理",AS+p.r+"　"+p.p+"。"+ask(p.nq),"一定不對",["一定對","不一定"],"前面的事發生了，後面的事就一定會發生。所以「"+p.nq+"」不可能對。")}
-  if(t===1){var useP=Math.random()<.5;return useP?mk("條件推理",AS+p.r+"　"+p.nq+"。"+ask(p.p),"一定不對",["一定對","不一定"],"如果「"+p.p+"」，就會「"+p.q+"」。但現在「"+p.nq+"」，所以「"+p.p+"」一定沒有發生。"):mk("條件推理",AS+p.r+"　"+p.nq+"。"+ask(p.np),"一定對",["一定不對","不一定"],"如果前面發生了，結果一定會發生。結果沒發生，所以前面一定沒發生，「"+p.np+"」一定對。")}
+  if(t===0){var useQ=RNG()<.5;return useQ?mk("條件推理",AS+p.r+"　"+p.p+"。"+ask(p.q),"一定對",["一定不對","不一定"],"因為有「如果…就…」這句話，前面的事發生了，後面的事就一定會發生。"):mk("條件推理",AS+p.r+"　"+p.p+"。"+ask(p.nq),"一定不對",["一定對","不一定"],"前面的事發生了，後面的事就一定會發生。所以「"+p.nq+"」不可能對。")}
+  if(t===1){var useP=RNG()<.5;return useP?mk("條件推理",AS+p.r+"　"+p.nq+"。"+ask(p.p),"一定不對",["一定對","不一定"],"如果「"+p.p+"」，就會「"+p.q+"」。但現在「"+p.nq+"」，所以「"+p.p+"」一定沒有發生。"):mk("條件推理",AS+p.r+"　"+p.nq+"。"+ask(p.np),"一定對",["一定不對","不一定"],"如果前面發生了，結果一定會發生。結果沒發生，所以前面一定沒發生，「"+p.np+"」一定對。")}
   if(t===2)return mk("條件推理",AS+p.r+"　"+p.q+"。"+ask(p.p),"不一定",["一定對","一定不對"],"「"+p.q+"」不一定是因為「"+p.p+"」："+p.why+"。把句子倒過來，就不一定對了。");
   return mk("條件推理",AS+p.r+"　"+p.np+"。"+ask(p.q),"不一定",["一定對","一定不對"],"那句話只說了「"+p.p+"」的時候會怎樣，沒說「"+p.np+"」的時候會怎樣。所以「"+p.q+"」可能發生，也可能不發生，不一定。")}
  if(L<=1)return form(R(0,1));
- if(L===2)return form(Math.random()<.5?0:1);
+ if(L===2)return form(RNG()<.5?0:1);
  if(L===3)return form(R(0,3));
  if(L===4)return form(R(0,3));
- if(L===5){var n=pick(NEC);if(Math.random()<.5)return mk("條件推理",n[0]+"　"+n[1]+"。"+ask(n[2]),"一定對",["一定不對","不一定"],"規定說「一定要先有」才可以。現在做到了，所以「"+n[2]+"」一定對。");
+ if(L===5){var n=pick(NEC);if(RNG()<.5)return mk("條件推理",n[0]+"　"+n[1]+"。"+ask(n[2]),"一定對",["一定不對","不一定"],"規定說「一定要先有」才可以。現在做到了，所以「"+n[2]+"」一定對。");
   return mk("條件推理",n[0]+"　"+n[2]+"。"+ask(n[3]),"不一定",["一定對","一定不對"],"規定只說「一定要先有」，沒說「有了就一定可以」。所以「"+n[3]+"」不一定。")}
  if(L===6){var a=pick(ALLS);return mk("條件推理","小明說：「"+a[0]+"。」如果小明這句話「不對」，代表什麼？",a[1],[a[2],a[3]],"「全部都是」只要有 1 個例外，這句話就不對了。所以「不對」代表「"+a[1]+"」，不一定是「全部都不是」。")}
  if(L===7){var c=pick(COUNTER);return mk("條件推理","有人說：「"+c[0]+"。」想讓這句話「不對」，只需要做什麼？",c[1],[c[2],c[3]],"看再多符合的例子，也不能說明「全部」都對。但只要找到 1 個不符合的例子（反例），這句話就不對了。")}
- if(L===8){var h=pick(CHAIN);if(Math.random()<.5)return mk("條件推理",h[0]+"　"+h[1]+ask(h[2]),"一定對",["一定不對","不一定"],"一件接一件：第一句讓第二句發生，第二句再讓結果發生，所以一定對。");
+ if(L===8){var h=pick(CHAIN);if(RNG()<.5)return mk("條件推理",h[0]+"　"+h[1]+ask(h[2]),"一定對",["一定不對","不一定"],"一件接一件：第一句讓第二句發生，第二句再讓結果發生，所以一定對。");
   return mk("條件推理",h[0]+"　"+h[1]+ask(h[3]),"一定不對",["一定對","不一定"],"一件接一件：結果一定會發生，所以「"+h[3]+"」一定不對。")}
  if(L===9){var v=pick(VALID);return mk("條件推理","假設下面的話都是真的：「"+v[0]+"」那麼，「"+v[1]+"」這句話，一定是對的嗎？",v[2]?"一定對":"不一定",v[2]?["一定不對","不一定"]:["一定對","一定不對"],v[2]?"這句結論，一定會跟著前面的話發生，所以一定對。":"前面的話只說了其中一個方向。倒過來想，或者只看一半，結論就不一定了。")}
  var m=pick(PROM),pq=promPick(),P=pq[0],Qv=pq[1];
@@ -348,7 +353,7 @@ G.prob=function(L){
  var a,b,n,t,ans;
  if(L<=1){
   a=R(2,6);b=R(1,4);t=a+b;
-  if(Math.random()<.5&&a!==b)return mk("機率","袋子裡有 "+a+" 顆紅球、"+b+" 顆藍球。閉著眼睛拿 1 顆，比較容易拿到哪一種？",a>b?"紅球":"藍球",[a>b?"藍球":"紅球","一樣容易"],"紅球有 "+a+" 顆，藍球有 "+b+" 顆，"+(a>b?"紅球":"藍球")+"比較多，所以比較容易拿到。");
+  if(RNG()<.5&&a!==b)return mk("機率","袋子裡有 "+a+" 顆紅球、"+b+" 顆藍球。閉著眼睛拿 1 顆，比較容易拿到哪一種？",a>b?"紅球":"藍球",[a>b?"藍球":"紅球","一樣容易"],"紅球有 "+a+" 顆，藍球有 "+b+" 顆，"+(a>b?"紅球":"藍球")+"比較多，所以比較容易拿到。");
   return mk("機率","袋子裡有 "+a+" 顆紅球、"+b+" 顆藍球。閉著眼睛拿 1 顆，拿到紅球的機會，用分數表示是多少？",fr(a,t),[fr(b,t),fr(a+1<t?a+1:a-1,t),fr(1,2)],"紅球 "+a+" 顆，球一共 "+t+" 顆，所以是 "+fr(a,t)+"。")}
  if(L===2){var ev=pick([["偶數",3],["大於 4 的數",2],["3 的倍數",2],["小於 3 的數",2],["大於 2 的數",4]]);
   return mk("機率","丟一顆正常的骰子（點數 1～6，每一面機會一樣）。丟出「"+ev[0]+"」的機會，用分數表示是多少？",fr(ev[1],6),[fr(ev[1]+1,6),fr(1,6),fr(ev[1],5)],"骰子有 6 種結果，符合的有 "+ev[1]+" 種，所以是 "+ev[1]+"/6"+(fr(ev[1],6)!==ev[1]+"/6"?"，約分後是 "+fr(ev[1],6):"")+"。")}
@@ -373,7 +378,7 @@ G.logic=function(L){
  function tf(b){return b?"對":"錯"}
  function neg(x){return {s:(x.s.charAt(0)==="("||x.s.length===1)?"¬"+x.s:"¬("+x.s+")",f:function(e){return !x.f(e)}}}
  function gen(d,nv){
-  if(d<=0||Math.random()<.2){var v=R(0,nv-1);return {s:vs[v],f:function(e){return e[v]}}}
+  if(d<=0||RNG()<.2){var v=R(0,nv-1);return {s:vs[v],f:function(e){return e[v]}}}
   var op=pick(["∧","∨","→","¬"]);
   if(op==="¬")return neg(gen(d-1,nv));
   var l=gen(d-1,nv),r=gen(d-1,nv);
@@ -385,10 +390,10 @@ G.logic=function(L){
  }
  var ST=[["我有帶水壺","我有帶帽子"],["今天是晴天","我有帶傘"],["小貓在睡覺","小狗在吃飯"],["我寫完作業了","我整理好書包了"],["商店有開","我有帶錢"]],cx=pick(ST),p,q,r;
  var LEG="（P、Q、R 是三句話，各自是對或錯。∧＝而且　∨＝或　→＝如果…就…　¬＝不是）　";
- if(L<=1){if(Math.random()<.5){p=true;q=true}else{var f1=pick([[true,false],[false,true],[false,false]]);p=f1[0];q=f1[1]}return mk("邏輯運算","小明說：「"+cx[0]+"，而且"+cx[1]+"。」其中，「"+cx[0]+"」這句話是"+tf(p)+"的，「"+cx[1]+"」這句話是"+tf(q)+"的。小明說的這整句話，是對的還是錯的？",tf(p&&q),[tf(!(p&&q))],"「而且」的意思是兩件事都要做到。要兩邊都對，整句才是對的。")}
- if(L===2){if(Math.random()<.5){p=false;q=false}else{var f2=pick([[true,false],[false,true],[true,true]]);p=f2[0];q=f2[1]}return mk("邏輯運算","小明說：「"+cx[0]+"，或者"+cx[1]+"。」其中，「"+cx[0]+"」這句話是"+tf(p)+"的，「"+cx[1]+"」這句話是"+tf(q)+"的。小明說的這整句話，是對的還是錯的？",tf(p||q),[tf(!(p||q))],"「或者」的意思是只要做到其中一件（或兩件）就可以。只有兩邊都錯，整句才是錯的。")}
+ if(L<=1){if(RNG()<.5){p=true;q=true}else{var f1=pick([[true,false],[false,true],[false,false]]);p=f1[0];q=f1[1]}return mk("邏輯運算","小明說：「"+cx[0]+"，而且"+cx[1]+"。」其中，「"+cx[0]+"」這句話是"+tf(p)+"的，「"+cx[1]+"」這句話是"+tf(q)+"的。小明說的這整句話，是對的還是錯的？",tf(p&&q),[tf(!(p&&q))],"「而且」的意思是兩件事都要做到。要兩邊都對，整句才是對的。")}
+ if(L===2){if(RNG()<.5){p=false;q=false}else{var f2=pick([[true,false],[false,true],[true,true]]);p=f2[0];q=f2[1]}return mk("邏輯運算","小明說：「"+cx[0]+"，或者"+cx[1]+"。」其中，「"+cx[0]+"」這句話是"+tf(p)+"的，「"+cx[1]+"」這句話是"+tf(q)+"的。小明說的這整句話，是對的還是錯的？",tf(p||q),[tf(!(p||q))],"「或者」的意思是只要做到其中一件（或兩件）就可以。只有兩邊都錯，整句才是錯的。")}
  if(L===3){var m=pick(PROM),pq3=promPick();p=pq3[0];q=pq3[1];return mk("邏輯運算",promQ(m,p,q),promA(m,p,q),(p&&!q)?["有說到做到"]:["沒有說到做到"],promW(m,p,q))}
- if(L===4){p=Math.random()<.5;q=Math.random()<.5;r=Math.random()<.5;var c3=pick([["我有帶水壺","我有帶帽子","我有帶傘"],["今天是晴天","我心情很好","我有出去玩"]]);
+ if(L===4){p=RNG()<.5;q=RNG()<.5;r=RNG()<.5;var c3=pick([["我有帶水壺","我有帶帽子","我有帶傘"],["今天是晴天","我心情很好","我有出去玩"]]);
   return mk("邏輯運算","小明說：「"+c3[0]+"，而且（"+c3[1]+"，或者"+c3[2]+"）。」其中，「"+c3[0]+"」是"+tf(p)+"的，「"+c3[1]+"」是"+tf(q)+"的，「"+c3[2]+"」是"+tf(r)+"的。小明說的這整句話，是對的還是錯的？",tf(p&&(q||r)),[tf(!(p&&(q||r)))],"先算括號裡的：「"+c3[1]+"，或者"+c3[2]+"」是"+tf(q||r)+"的。再和「"+c3[0]+"」（"+tf(p)+"）用「而且」連起來："+tf(p&&(q||r))+"。")}
  if(L===5){var d5=pick([
   ["老師說：「不是每個人都帶了水壺。」","至少有 1 個人沒帶水壺",["每個人都沒帶水壺","只有 1 個人沒帶水壺","一半的人沒帶水壺"],"「不是每個人都有」代表：至少有 1 個人沒有。（不一定全部都沒有。）"],
@@ -396,7 +401,7 @@ G.logic=function(L){
   ["小華說：「我沒有帶水壺，也沒有帶帽子。」","水壺和帽子兩樣都沒帶",["水壺和帽子，至少有 1 樣沒帶","只有水壺沒帶","水壺和帽子兩樣都有帶"],"「沒有 A，也沒有 B」代表兩樣都沒有。"],
   ["小明說：「不是每一題都對。」","至少有 1 題不對",["每一題都不對","只有 1 題不對","一半的題不對"],"「不是每一題都對」代表：至少有 1 題不對。"]]);
   return mk("邏輯運算",d5[0]+"　這句話的意思，和哪一句一樣？",d5[1],d5[2],d5[3])}
- if(L===6){var ex,env,k=0;do{ex=gen(2,3);k++}while(!good(ex,2)&&k<40);env=[Math.random()<.5,Math.random()<.5,Math.random()<.5];
+ if(L===6){var ex,env,k=0;do{ex=gen(2,3);k++}while(!good(ex,2)&&k<40);env=[RNG()<.5,RNG()<.5,RNG()<.5];
   return mk("邏輯運算",LEG+"P 是"+tf(env[0])+"、Q 是"+tf(env[1])+"、R 是"+tf(env[2])+"。算式 "+ex.s+" 的結果，是對還是錯？",tf(ex.f(env)),[tf(!ex.f(env))],"從最裡面的括號開始，一層一層算。例如先算括號裡的小部分，把它換成「對」或「錯」，再算外面一層，直到只剩一個答案。這題算出來是「"+tf(ex.f(env))+"」。")}
  if(L===7){var ex2,cnt,k2=0;do{ex2=gen(3,3);cnt=0;for(var i=0;i<8;i++){if(ex2.f([!!(i&1),!!(i&2),!!(i&4)]))cnt++}k2++}while((!good(ex2,3)||cnt===0||cnt===8)&&k2<60);
   return mk("邏輯運算",LEG+"P、Q、R 各自可以是對或錯，一共有 8 種情況。算式 "+ex2.s+" 在幾種情況下，結果是「對」？",cnt,[cnt+1,cnt-1,8-cnt],"把 8 種情況，一種一種代進去算，數一數結果是「對」的有幾種，答案是 "+cnt+" 種。")}
@@ -407,7 +412,7 @@ G.logic=function(L){
  if(L===9){var cp=pick(CP),rule="如果「"+cp.p+"」，那麼「"+cp.q+"」";
   return mk("邏輯運算","下面哪一句話，和這句話的意思一樣？　"+rule,"如果「"+cp.nq+"」，那麼「"+cp.np+"」",["如果「"+cp.q+"」，那麼「"+cp.p+"」","如果「"+cp.np+"」，那麼「"+cp.nq+"」","「"+cp.p+"」，而且「"+cp.nq+"」"],"原本的句子，和「把前後都改成相反、再顛倒過來」的句子，意思永遠一樣：結果沒發生，就代表前面一定沒發生。其他的說法，不一定和原本一樣。")}
  var n=pick([3,4,5]);
- if(Math.random()<.5)return mk("邏輯運算","有 "+n+" 個開關，每個都可以開或關。一共有幾種不同的開關組合？",Math.pow(2,n),[n*2,n*n,Math.pow(2,n)-1],"每個開關有 2 種，所以是 "+Array(n).fill(2).join(" × ")+" ＝ "+Math.pow(2,n)+" 種。");
+ if(RNG()<.5)return mk("邏輯運算","有 "+n+" 個開關，每個都可以開或關。一共有幾種不同的開關組合？",Math.pow(2,n),[n*2,n*n,Math.pow(2,n)-1],"每個開關有 2 種，所以是 "+Array(n).fill(2).join(" × ")+" ＝ "+Math.pow(2,n)+" 種。");
  return mk("邏輯運算","有 3 個開關，每個都可以開或關。要「至少開一個」燈才會亮。有幾種開關組合燈是不亮的？",1,[0,2,7],"燈不亮，代表「3 個開關都是關」，只有 1 種。");
 };
 G.liar=function(L){
@@ -432,7 +437,7 @@ G.liar=function(L){
    var T=sol[0];
    function text(s){return s.ty===0?names[s.j]+"是騙人村的人":s.ty===1?names[s.j]+"和"+names[s.k]+"都是騙人村的人":s.ty===2?names[s.j]+"和"+names[s.k]+"之中，剛好有 1 個是誠實村的人":s.ty===3?names[s.j]+"是誠實村的人":"我和"+names[s.j]+"是同一個村的人"}
    var txt=st.map(function(s){return names[s.i]+"說：「"+text(s)+"。」"}).join("<br>");
-   var want=Math.random()<.5,cand=[];for(i=0;i<n;i++){if(T[i]===want)cand.push(i)}
+   var want=RNG()<.5,cand=[];for(i=0;i<n;i++){if(T[i]===want)cand.push(i)}
    if(!cand.length&&tries<600)continue;var who=cand.length?pick(cand):R(0,n-1);
    var steps=st.map(function(s){var v=val(s,T);return names[s.i]+"是"+(T[s.i]?"誠實村":"騙人村")+"的人，說的話"+(T[s.i]?"一定是對的":"一定是錯的")+"。他說「"+text(s)+"」，這句話真的"+(v?"是對的":"是錯的")+"，說得通 ✓"}).join("<br>");
    return mk("真假話","誠實村的人永遠說真話，騙人村的人永遠說假話。有 "+n+" 個人："+names.join("、")+"。<br>"+txt+"<br>請問「"+names[who]+"」是哪一個村的人？",T[who]?"誠實村":"騙人村",[T[who]?"騙人村":"誠實村"],"做法：先猜一個人是哪個村的，再檢查每個人的話，沒有說不通的地方，就對了。<br>"+steps+"<br>只有這一種猜法完全說得通。");
@@ -451,7 +456,7 @@ G.money=function(L){
  if(L===6){a=pick([1000,2000,10000]);b=pick([5,10]);ans=Math.round(a*Math.pow(1+b/100,2)*100)/100;return mk("理財","存 "+a+" 元，每年增加 "+b+"%。第 1 年的利息也一起放進去，第 2 年連利息一起算（這叫複利）。2 年後，一共有多少元？",fm(ans),[a+a*b/100*2,a*(1+b/100),a*(1+2*b/100)+a*b/100],"第 1 年後："+a+" × "+(1+b/100)+" ＝ "+a*(1+b/100)+"。第 2 年再乘 "+(1+b/100)+" ＝ "+fm(ans)+"。利息也會生出新的利息。")}
  if(L===7){a=pick([10,20]);b=pick([100,200]);n=pick([10,20,50]);var ev=b/n;
   return mk("理財","抽獎一次要付 "+a+" 元。每 "+n+" 張籤，有 1 張可以中 "+b+" 元，其他的沒有。抽很多次，平均每抽一次，可以拿回多少元？",ev,[b,a,ev*2],"每 "+n+" 次，大約中 1 次 "+b+" 元，所以平均每次是 "+b+" ÷ "+n+" ＝ "+ev+" 元。"+(ev<a?"比付出的 "+a+" 元少，抽久了會虧。":ev>a?"比付出的 "+a+" 元多，抽久了會賺。":"剛好等於付出的 "+a+" 元，不賺也不賠。"))}
- if(L===8){var up=Math.random()<.5;a=up?pick([4,5,6]):pick([2,3]);b=up?pick([1,2]):pick([4,5,6]);
+ if(L===8){var up=RNG()<.5;a=up?pick([4,5,6]):pick([2,3]);b=up?pick([1,2]):pick([4,5,6]);
   return mk("理財","銀行存款，1 年會多 "+a+"%。但是東西的價錢，1 年漲了 "+b+"%。1 年後，你存的錢「能買到的東西」，是變多還是變少？",up?"變多":"變少",[up?"變少":"變多","不變"],up?"錢多了 "+a+"%，東西只貴了 "+b+"%，錢增加得比東西漲得快，所以能買到的東西變多了。":"錢只多了 "+a+"%，東西卻貴了 "+b+"%，東西漲得比較快，所以同樣一筆錢，能買到的東西變少了。")}
  if(L===9){a=pick([6000,9600,12000,14400]);var ex=pick([0,50,100,150]),per=a/12+ex,tot=ex*12;
   return mk("理財","手機現金價 "+a+" 元。如果分 12 期付清，每期付 "+per+" 元。分期付款，總共比現金價多付多少元？",tot,[tot+100,a/12,a],ex===0?"每期剛好是 "+a+" ÷ 12 ＝ "+per+" 元，沒有多付，所以多付 0 元（零利率）。":"每期多付 "+ex+" 元，12 期一共多付 "+ex+" × 12 ＝ "+tot+" 元。")}
@@ -496,17 +501,67 @@ var SK=[
  {id:"liar",n:"真假話謎題",e:"🕵️",g:G.liar,base:[1,1,3]},{id:"sets",n:"集合與韋恩圖",e:"⭕",g:G.sets,base:[1,2,4]},
  {id:"cnt",n:"排列組合",e:"🎲",g:G.cnt,base:[1,2,4]},{id:"prob",n:"機率",e:"🎯",g:G.prob,base:[1,1,3]},
  {id:"money",n:"經濟理財",e:"💰",g:G.money,base:[1,2,4]},{id:"ev",n:"證據與統計",e:"🔬",g:G.ev,base:[1,1,3]}];
+/* ===== 證據實驗室：公平實驗、看圖表、丟硬幣實驗、抽樣 ===== */
+var LAB1=[
+ {title:"兩盆豆子",t:["肥料","有肥料","沒有肥料"],f:[["陽光","放在窗邊","放在暗房間"],["水量","每天澆 100 毫升","每天澆 300 毫升"],["土壤","一樣的土","沙子"],["花盆","一樣大的盆","一大一小的盆"]],goal:"肥料有沒有讓豆子長得比較高"},
+ {title:"兩架紙飛機",t:["紙張","厚紙","薄紙"],f:[["摺法","一樣的摺法","不同的摺法"],["丟的力氣","一樣大力","一個大力、一個小力"],["場地","都在室內","一個室內、一個戶外有風"],["丟出的高度","一樣高","一個高、一個低"]],goal:"厚紙和薄紙，哪種飛得比較遠"},
+ {title:"兩個小朋友",t:["早餐","有吃早餐","沒吃早餐"],f:[["睡眠","都睡 9 小時","一個睡 9 小時、一個睡 5 小時"],["考試題目","一樣的題目","不一樣的題目"],["考試時間","都在早上","一個早上、一個晚上"],["年級","都是 4 年級","一個 4 年級、一個 6 年級"]],goal:"吃早餐有沒有讓考試考得比較好"}];
+function labTbl(rows,h1,h2){return '<table class="tb"><tr><th>條件</th><th>'+h1+'</th><th>'+h2+'</th></tr>'+rows.map(function(r){return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td></tr>'}).join("")+'</table>'}
+function labFair(L){
+ var c=pick(LAB1),k,hd=c.title==="兩個小朋友"?["小明","小華"]:c.title==="兩盆豆子"?["甲盆","乙盆"]:["甲飛機","乙飛機"];
+ if(L<=3)k=1;else if(L<=6)k=pick([1,2]);else k=pick([0,1,2]);
+ var idx=shuf([0,1,2,3]),bad=idx.slice(0,k),rows=[[c.t[0],c.t[1],c.t[2]]];
+ c.f.forEach(function(f,i){rows.push(bad.indexOf(i)>-1?[f[0],f[1],f[2]]:[f[0],f[1],f[1]])});
+ var names=bad.map(function(i){return c.f[i][0]});
+ var head=c.title+"。想知道：「"+c.goal+"」。<br>"+labTbl(rows,hd[0],hd[1])+"<br>";
+ if(L<=3){
+  return mk("實驗設計",head+"哪一個條件，讓這個比較「不公平」？（它除了「"+c.t[0]+"」，也不一樣）",names[0],c.f.map(function(f){return f[0]}).filter(function(x){return x!==names[0]}),"公平的比較，只能讓「"+c.t[0]+"」不一樣，其他條件都要保持一樣。這裡「"+names[0]+"」也不一樣，所以不公平。")}
+ return mk("實驗設計",head+"除了「"+c.t[0]+"」以外，還有幾個條件也不一樣？",k,[k+1,k+2,Math.max(0,k-1)===k?k+3:Math.max(0,k-1)],k===0?"只有「"+c.t[0]+"」不一樣，其他都一樣，這是公平的比較。":"公平的比較，只能讓「"+c.t[0]+"」不一樣。這裡「"+names.join("、")+"」也不一樣，一共 "+k+" 個，所以不公平。")}
+function labBars(items,min,max){
+ return '<div class="bars">'+items.map(function(it){var h=Math.max(4,Math.round((it[1]-min)/(max-min)*100));return '<div class="bar"><i style="height:'+h+'%"></i><b>'+it[0]+'<br>'+it[1]+'</b></div>'}).join("")+'</div><div class="note">圖的座標：最下面是 '+min+'，最上面是 '+max+'。</div>';
+}
+function labChart(L){
+ var ctxs=[["甲班","乙班","喜歡打球的人","人"],["甲店","乙店","這個月賣出的冰淇淋","支"],["小明","小華","這週讀的書","本"]],c=pick(ctxs),tricky=Math.random()<(L>=5?.7:.5),a,b;
+ if(tricky){var base=R(40,80);a=base+R(1,3);b=base;
+  return mk("看圖表","<br>"+labBars([[c[0],a],[c[1],b]],base-5,a+3)+"圖上，"+c[0]+"看起來比"+c[1]+"高很多。其實"+c[0]+"是 "+a+" "+c[3]+"，"+c[1]+"是 "+b+" "+c[3]+"（"+c[2]+"）。真的差很多嗎？","差不多，因為座標不是從 0 開始",["差很多，"+c[0]+"高很多","差很多，"+c[1]+"少很多","圖畫錯了，要重新調查"],"看圖表要先看座標。這張圖的座標從 "+(base-5)+" 開始，不是從 0，所以小小的差別看起來變得很大。其實只差 "+(a-b)+" "+c[3]+"。")}
+ a=R(40,90);b=R(10,a-8);
+ return mk("看圖表","<br>"+labBars([[c[0],a],[c[1],b]],0,100)+c[0]+"比"+c[1]+"多幾"+c[3]+"？（"+c[2]+"）",a-b,[a+b,a-b+5,a-b-5>0?a-b-5:a-b+9],"這張圖的座標從 0 開始，數字就是 "+c[0]+" "+a+"、"+c[1]+" "+b+"。"+a+" － "+b+" ＝ "+(a-b)+"。");
+}
+function labCoin(L){
+ var th='<div class="tip"><div id="coinout">還沒有丟。按下面的按鈕，讓電腦幫你丟硬幣，看看「正面的比例」。</div></div><div class="act"><button class="b g sm" data-a="coin" data-v="10">丟 10 次</button><button class="b g sm" data-a="coin" data-v="100">丟 100 次</button><button class="b g sm" data-a="coin" data-v="1000">丟 1000 次</button></div>';
+ if(Math.random()<.6)return mk("硬幣實驗","<br>"+th+"多丟幾次看看（也可以重複按）。丟的次數愈來愈多，「正面的比例」會怎麼樣？","愈來愈接近一半",["每次都剛好一半","愈來愈多（超過一半）","愈來愈少"],"丟的次數少，比例可能差很多（例如 10 次丟出 7 次正面）；丟的次數愈多，正面的比例就愈接近一半。所以實驗要多做幾次。");
+ var n=pick([10,10,20]),h=n===10?pick([7,8]):pick([14,15]);
+ return mk("硬幣實驗","小明丟了 "+n+" 次硬幣，有 "+h+" 次是正面，他說：「這個硬幣一定有問題，不公平！」這樣說合理嗎？","不太合理，才丟 "+n+" 次，次數太少",["合理，因為正面比較多","合理，因為不是剛好一半","不用再丟了，一定有問題"],"丟的次數少，結果很容易偏一邊。要再多丟很多次，才能判斷硬幣有沒有問題。");
+}
+function labSample(){
+ var cs=[["水果","水果社的同學"],["卡通","卡通社的同學"],["運動","籃球隊的同學"],["午餐","每天都吃營養午餐的同學"]],c=pick(cs);
+ return mk("抽樣","想知道「全校」同學最喜歡哪一種"+c[0]+"，怎麼問比較好？","每個年級各隨機問 5 個人",["只問"+c[1],"只問自己的好朋友","只問班上第 1 排的同學"],"想知道全校的想法，要問「各種不同的人」，而且要隨機問（誰都有機會被問到）。只問某一群人，答案會偏向那一群。");
+}
+G.lab=function(L){
+ var r=Math.random();
+ if(L<=2)return r<.7?labFair(L):labSample();
+ if(L<=4)return r<.35?labFair(L):r<.65?labChart(L):r<.85?labSample():labCoin(L);
+ if(L<=6)return r<.3?labFair(L):r<.6?labChart(L):r<.85?labCoin(L):labSample();
+ return r<.4?labFair(L):r<.7?labChart(L):labCoin(L);
+};
+SK.push({id:"lab",n:"公平實驗與圖表",e:"🧪",g:G.lab,base:[1,2,4]});
+var _liar=G.liar;
+G.liar=function(L){var q=_liar(L),m=q.q.match(/個人：([^。]+)。/);if(m)q.names=m[1].split("、");return q};
+SK.filter(function(s){return s.id==="liar"})[0].g=G.liar;
 
 var HERO={"波妞":{e:"🐠",tier:0,bg:"#9bd4ff"},"Hana":{e:"🌸",tier:1,bg:"#ffc2dc"},"Joy":{e:"🌟",tier:2,bg:"#ffe08a"}};
 var CL=[
  {n:"紅",c:"#e5484d",s:"●"},{n:"藍",c:"#3b82f6",s:"▲"},{n:"綠",c:"#2fb36d",s:"■"},{n:"黃",c:"#e0a800",s:"★"},
  {n:"紫",c:"#8b5cf6",s:"◆"},{n:"橘",c:"#ff7a1a",s:"♥"},{n:"粉",c:"#ec4899",s:"✿"},{n:"青",c:"#14b8a6",s:"✚"}];
-var LV=[{len:2,col:3,rep:false,max:6},{len:3,col:4,rep:false,max:8},{len:4,col:5,rep:false,max:9},{len:4,col:6,rep:true,max:10},{len:5,col:6,rep:true,max:12},{len:5,col:8,rep:true,max:12}];
+var LV=[{len:2,col:3,rep:false,max:6},{len:3,col:4,rep:false,max:8},{len:4,col:5,rep:false,max:9},{len:4,col:6,rep:true,max:10},{len:5,col:6,rep:true,max:12},{len:5,col:8,rep:true,max:12},{len:6,col:7,rep:true,max:13},{len:6,col:8,rep:true,max:12}];
 var CTIPS=["好方法：先猜不同的顏色，看有哪些顏色在密碼裡，再把「不可能」的顏色劃掉。","好方法：得到「都不在密碼裡」，代表猜的每個顏色都不是，這是最強的線索！","好方法：每次只換一個位置或一個顏色，比較前後提示的變化，就知道那一格是什麼。","大人也在用：猜之前問自己，如果這是真答案，跟前面所有提示都對得上嗎？","大人也在用：先用前幾次猜測「問問題」，再用後面幾次「確認答案」。"];
 var WORLDS={
- code:{n:"密碼島",en:"Code Island",e:"🏝️",c:"#ffd66b",ns:6},
- pattern:{n:"規律森林",en:"Pattern Forest",e:"🌳",c:"#9adf8f",ns:6,sk:"seq"},
- shop:{n:"零用錢小店",en:"Money Shop",e:"🏪",c:"#ffa8a8",ns:6,sk:"money"}};
+ code:{n:"密碼島",en:"Code Island",e:"🏝️",c:"#ffd66b",ns:8,need:1},
+ pattern:{n:"規律森林",en:"Pattern Forest",e:"🌳",c:"#9adf8f",ns:11,sk:"seq",boss:1},
+ shop:{n:"零用錢小店",en:"Money Shop",e:"🏪",c:"#ffa8a8",ns:11,sk:"money",boss:1},
+ liar:{n:"騙人村",en:"Liar Village",e:"🏘️",c:"#ffd9a8",ns:11,sk:"liar",boss:1},
+ lab:{n:"證據實驗室",en:"Evidence Lab",e:"🔬",c:"#a8e6ff",ns:11,sk:"lab",boss:1},
+ plaza:{n:"社區廣場",en:"Town Square",e:"⛲",c:"#c8f0b0",ns:6,need:1}};
 var HK={
  seq:["把每兩個相鄰的數字相減，把差寫在中間，看看是不是都一樣。","如果差不一樣，試試看是不是「每次乘同一個數」，或「一次比一次多（少）」。","找到規則後，從最後一個數字開始，照規則算下一個。"],
  alg:["先找出「不知道的那個數」。可以用方塊 □ 代表它。","想想怎麼讓它「單獨留下來」：兩邊同時加、減、乘、除一樣的數。","算出答案後，把它放回題目，看看兩邊是不是一樣。"],
@@ -539,7 +594,10 @@ var PG=[
  {id:"cnt",d:"學有系統地數「有幾種」。關鍵問兩件事：有沒有順序？有沒有重複？縮小人數、列出來最有效。",q:["第 1 步有幾種選法？第 2 步呢？","甲乙和乙甲，算同一種還是不同種？","把人數縮小到 3 個，一個一個列出來看看。"]},
  {id:"prob",d:"學「想要的 ÷ 全部」，並分辨前後事件會不會互相影響。請孩子先列出所有可能再數。",q:["全部有幾種可能？你要的有幾種？","把所有可能寫成表格，圈起你要的。","前面發生的事，會改變後面的可能嗎？"]},
  {id:"money",d:"把找零、折扣、利息變成算式，並檢查答案合不合理。折扣先換成小數，或想成「100 元付幾元」。",q:["買了幾個？1 個多少錢？先寫下來。","打 8 折，就是 100 元只付幾元？","你的答案合理嗎？比原價貴還是便宜？"]},
- {id:"ev",d:"學問「證據夠不夠、有沒有別的原因、比較公不公平」。這是看懂新聞廣告的能力，沒有單一算式。",q:["這個結論的證據是什麼？問了幾個人？問了誰？","還有沒有別的原因？","要公平比較，什麼要改變？什麼要保持一樣？"]}];
+ {id:"ev",d:"學問「證據夠不夠、有沒有別的原因、比較公不公平」。這是看懂新聞廣告的能力，沒有單一算式。",q:["這個結論的證據是什麼？問了幾個人？問了誰？","還有沒有別的原因？","要公平比較，什麼要改變？什麼要保持一樣？"]},
+ {id:"lab",d:"用小實驗學「公平比較」：只改變一個條件。也練習看圖表要先看座標，並用丟硬幣體會「次數多才準」。",q:["這兩邊，哪些條件一樣？哪些不一樣？","要公平比較，可以有幾個不一樣？","這張圖的座標從哪裡開始？差別真的有那麼大嗎？"]}];
+HK.lab=["先看表格：每一列，兩邊一樣還是不一樣？","公平的比較，只能有「1 個」條件不一樣（就是你想測的那一個）。","把「多出來不一樣」的條件，一個一個找出來。"];
+HKH.lab=HK.lab;
 var PRAISE=["好眼力！","這招太聰明了！","你想出來了！","漂亮！","腦袋轉得真快！","連這個都難不倒你！"];
 var SOFT=["差一點點！換個角度想想。","沒關係，偵探都是這樣破案的。","再想想，線索就在題目裡。"];
 var OWLSAY=["今天想挑戰哪裡呢？","先從「今日冒險」開始，最適合你！","好久不見！準備好動腦了嗎？","每個人的想法都不一樣，很棒喔。"];
@@ -580,10 +638,10 @@ function stars(w,i){return num("st_"+w+"_"+i)}
 function unlocked(w,i){
  if(i===0)return true;
  if(w==="code"&&P==="Joy_"&&i<=2)return true;
- return stars(w,i-1)>0;
+ return stars(w,i-1)>=(WORLDS[w].need||2);
 }
 function worldStars(w){var n=0;for(var i=0;i<WORLDS[w].ns;i++)n+=stars(w,i);return n}
-function totalStars(){return worldStars("code")+worldStars("pattern")+worldStars("shop")+num("sk_ok_all")}
+function totalStars(){var n=num("sk_ok_all")+num("dc_n");Object.keys(WORLDS).forEach(function(w){n+=worldStars(w)});return n}
 function saveStar(w,i,s){if(s>stars(w,i))ss("st_"+w+"_"+i,s)}
 function tier(){return HERO[P.replace("_","")].tier}
 function lvOf(s){var v=num("lv_"+s);if(v)return v;var k=SK.filter(function(x){return x.id===s})[0];return k.base[tier()]}
@@ -601,11 +659,10 @@ function showHome(){
  var hr=new Date().getHours(),g=hr<11?"早安":hr<18?"午安":"晚安";
  $("gtext").textContent=g+"，"+n+"！"+OWLSAY[Math.floor(Math.random()*OWLSAY.length)];
  var camp=0;SK.forEach(function(s){camp+=lvOf(s.id)});
- var N=[
-  {k:"code",s:worldStars("code")+" / 18 ⭐"},{k:"pattern",s:worldStars("pattern")+" / 18 ⭐"},{k:"shop",s:worldStars("shop")+" / 18 ⭐"},
-  {k:"camp",n:"訓練場",en:"Training Camp",e:"🏛️",c:"#c9b8ff",s:"10 種技能　等級合計 "+camp},
-  {k:"open",n:"開放問題",en:"Open Questions",e:"🌈",c:"#ffb3d9",s:"已想過 "+num("op_n")+" 題"},
-  {k:"soon",n:"更多地方建造中",en:"More coming",e:"🚧",c:"#ddd",s:"騙子村・證據實驗室・社區廣場",lock:1}];
+ var N=[];
+ ["code","pattern","shop","liar","lab","plaza"].forEach(function(k){N.push({k:k,s:worldStars(k)+" / "+WORLDS[k].ns*3+" ⭐"})});
+ N.push({k:"camp",n:"訓練場",en:"Training Camp",e:"🏛️",c:"#c9b8ff",s:SK.length+" 種技能　等級合計 "+camp});
+ N.push({k:"open",n:"開放問題",en:"Open Questions",e:"🌈",c:"#ffb3d9",s:"已想過 "+num("op_n")+" 題"});
  var h="";
  N.forEach(function(x,idx){
   var w=WORLDS[x.k],nm=x.n||w.n,en=x.en||w.en,e=x.e||w.e,c=x.c||w.c,first=idx===0&&!stars("code",0);
@@ -621,9 +678,9 @@ function closeP(){clearTimeout(timer);$("ov").hidden=true;ovp.innerHTML="";Q=nul
 function menu(w){
  ctx.w=w;var W=WORLDS[w];
  var h='<div class="top"><b>'+W.e+' '+W.n+' '+W.en+'</b><button class="b g sm" data-a="close">回地圖 Map</button></div>';
- h+='<p class="note">'+(w==="code"?"貓頭鷹藏了一排顏色，你要猜出是哪些顏色，還有它們各放在第幾格。每猜一次，貓頭鷹會給你線索。第 1 關最簡單，先從這裡開始！":"每一關 3 題，題目每次都不一樣。自己寫下答案，不夠再用提示。")+'</p><div class="stg">';
+ h+='<p class="note">'+(w==="code"?"貓頭鷹藏了一排顏色，你要猜出是哪些顏色，還有它們各放在第幾格。每猜一次，貓頭鷹會給你線索。第 1 關最簡單，先從這裡開始！":(w==="plaza"?"每一關 3 個小故事。選你會做的，沒有標準答案，但有的做法比較好。":"每一關 3 題，題目每次都不一樣。拿到 2 顆星以上，才能打開下一關。最後一關是魔王關！"))+'</p><div class="stg">';
  for(var i=0;i<W.ns;i++){
-  var lk=!unlocked(w,i),st=stars(w,i),sub=w==="code"?(LV[i].len+" 格・"+LV[i].col+" 種顏色"):("難度 Level "+Math.min(10,SKL(W.sk)+i));
+  var lk=!unlocked(w,i),st=stars(w,i),sub=w==="code"?(LV[i].len+" 格・"+LV[i].col+" 種顏色"):w==="plaza"?"3 個小故事":(W.boss&&i===W.ns-1)?"👑 魔王關（5 題，Level 10）":("難度 Level "+Math.min(10,SKL(W.sk)+i));
   h+='<button class="b'+(lk?' g':st>0?' ok':'')+'" data-a="stage" data-v="'+i+'"'+(lk?' disabled':'')+'><span>'+(lk?'🔒 ':'')+'第 '+(i+1)+' 關<small>'+sub+'</small></span><span>'+(st>0?"⭐".repeat(st)+"☆".repeat(3-st):"☆☆☆")+'</span></button>';
  }
  openP(h+'</div>');
@@ -642,7 +699,7 @@ function startQ(q,o){
 }
 function head(){
  if(Q.kind==="train"||Q.kind==="open")return '<div class="top"><button class="b g sm" data-a="tend">結束 End</button><b>'+Q.title+'</b><span class="stat">'+(TR.idx+1)+' / '+TR.count+'</span></div>';
- var d="";for(var i=0;i<3;i++)d+='<i class="'+(i<ST.idx?'on':i===ST.idx?'cur':'')+'"></i>';
+ var d="";for(var i=0;i<ST.n;i++)d+='<i class="'+(i<ST.idx?'on':i===ST.idx?'cur':'')+'"></i>';
  return '<div class="top"><button class="b g sm" data-a="menu">← 返回 Back</button><b>'+WORLDS[ST.w].e+' 第 '+(ST.i+1)+' 關</b><span class="dots">'+d+'</span></div>';
 }
 function say(w,lang){try{if(!window.speechSynthesis)return;speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(w);u.lang=lang||"en-US";u.rate=lang==="zh-TW"?.9:.85;speechSynthesis.speak(u)}catch(e){}}
@@ -650,10 +707,11 @@ function ph(q){var a=String(q.o[q.a]);return a.indexOf("/")>-1?"你的答案（�
 function renderQ(){
  var q=Q.q,h=head();
  h+='<div class="qrow"><div class="q">'+q.q+'</div><button class="b g sm" data-a="read" aria-label="讀給我聽">🔊</button></div>';
+ if(Q.q.names)h+=nbHtml();
  if(Q.mode==="input")h+='<div class="inrow"><input id="qi" type="text" inputmode="'+(String(q.o[q.a]).indexOf("/")>-1?"text":"decimal")+'" autocomplete="off" placeholder="'+ph(q)+'" value="'+Q.last.replace(/"/g,"")+'"><button class="b" data-a="qsub">送出</button></div>';
  else{h+='<div class="opts">';q.o.forEach(function(x,k){h+='<button class="b g'+(Q.off[k]?' bad':'')+'" data-a="qopt" data-v="'+k+'"'+(Q.off[k]?' disabled':'')+'>'+String.fromCharCode(65+k)+'．'+x+'</button>'});h+='</div>'}
  h+='<div class="msg" id="qmsg"></div><div class="act"><button class="b g sm" data-a="qhint"'+(Q.hl>=3?' disabled':'')+'>💡 提示 Hint '+Q.hl+'/3</button>'+(Q.mode==="input"&&Q.hl>=2?'<button class="b g sm" data-a="qchoices">看選項</button>':'')+'<button class="b g sm" data-a="qpeek"'+(Q.tries>0||Q.hl>0?'':' disabled')+'>👀 看答案</button><button class="b g sm" data-a="qdis">🤔 我有不同想法</button></div>';
- openP(h);var el=$("qi");if(el)el.focus();
+ openP(h);var el=$("qi");if(el)el.focus();if(Q.coin&&$("coinout"))$("coinout").innerHTML=Q.coin.slice(-5).join("<br>");
 }
 function setMsg(t,c){var m=$("qmsg");if(!m)return;m.className="msg show "+(c||"");m.textContent=t}
 function shake(el){if(!el)return;el.style.animation="none";void el.offsetWidth;el.style.animation="shake .4s"}
@@ -705,7 +763,7 @@ function qDone(peek){
  
 }
 function nextLabel(){
- if(Q.kind==="stage")return ST.idx>=2?"完成這一關 Finish":"下一題 Next →";
+ if(Q.kind==="stage")return ST.idx>=ST.n-1?"完成這一關 Finish":"下一題 Next →";
  return TR.idx+1>=TR.count?"看成績 Results":"下一題 Next →";
 }
 function diaryAdd(o){
@@ -718,20 +776,21 @@ function writeBox(){
 }
 function qNext(){
  clearTimeout(timer);
- if(Q.kind==="stage"){ST.idx++;if(ST.idx>=3)stageEnd();else stageQ()}
+ if(Q.kind==="stage"){ST.idx++;if(ST.idx>=ST.n)stageEnd();else stageQ()}
  else{TR.idx++;trainNext()}
 }
 /* ---------- 關卡（每關 3 題） ---------- */
 function runStage(w,i){
  if(w==="code"){runCode(i);return}
- ST={w:w,i:i,idx:0,credit:0};ctx.w=w;stageQ();
+ if(w==="plaza"){sceneRun(i);return}
+ var W=WORLDS[w];ST={w:w,i:i,idx:0,credit:0,n:(W.boss&&i===W.ns-1)?5:3};ctx.w=w;stageQ();
 }
 function stageQ(){
  var sk=SK.filter(function(x){return x.id===WORLDS[ST.w].sk})[0],lv=Math.min(10,sk.base[tier()]+ST.i);
  startQ(fresh(sk,lv),{kind:"stage",sk:sk.id,lv:lv});
 }
 function stageEnd(){
- var c=ST.credit,st=c>=2.5?3:c>=1.5?2:c>=.5?1:0,w=ST.w,i=ST.i,nx=i+1<WORLDS[w].ns;
+ var c=ST.credit*3/ST.n,st=c>=2.5?3:c>=1.5?2:c>=.5?1:0,w=ST.w,i=ST.i,nx=i+1<WORLDS[w].ns;
  if(st>0){saveStar(w,i,st);sWin();confetti(60)}else sBad();
  var h='<div class="res">'+owl(st>0?"happy":"think","owl")+'<h2>'+(st>0?"這一關完成了！":"再試一次吧")+'</h2><div class="stars">'+[1,2,3].map(function(n){return '<span style="animation-delay:'+n*.2+'s;opacity:'+(n<=st?1:.25)+'">⭐</span>'}).join("")+'</div>'+
   '<p class="note">'+(st>0?"自己想出來的題目愈多，星星愈多。":"這一關還沒拿到星星。每次的題目都不一樣，再來一次！")+'</p><div class="act">'+(st>0&&nx?'<button class="b ok" data-a="stnext">下一關 Next →</button>':'')+(st===0?'<button class="b" data-a="stagain">再試一次 Retry</button>':'')+'<button class="b g" data-a="menu">關卡列表 Levels</button><button class="b g" data-a="close">回地圖 Map</button></div></div>';
@@ -753,6 +812,7 @@ function tStart(ids,count,open){
 }
 function trainNext(){
  if(TR.idx>=TR.count){tResult();return}
+ if(TR.daily){var it=TR.list[TR.idx];startQ(it.q,{kind:"train",sk:it.sk.id,lv:it.lv,title:"🔥 每日挑戰 · "+it.sk.e+" "+it.sk.n});return}
  if(TR.open||(TR.ids.length>1&&TR.idx%4===3)){openStart();return}
  var id=TR.ids[0];
  if(TR.ids.length>1){
@@ -764,9 +824,10 @@ function trainNext(){
  startQ(fresh(sk,lv),{kind:"train",sk:id,lv:lv,title:sk.e+' '+sk.n+' · Level '+lv});
 }
 function tResult(){
+ if(TR.daily&&TR.idx>=TR.count)dcFinish();
  var good=TR.ok;
  if(!TR.open){sWin();confetti(50)}
- var h='<div class="res">'+owl("happy","owl")+'<h2>這一回完成了！</h2><div class="tip">'+(TR.open?'你想了 <b>'+TR.count+'</b> 個問題，每個想法都收進「思考日記」了。':'自己想出來：<b>'+good+'</b> / '+TR.count+(TR.up.length?'<br>升級：'+TR.up.map(function(id){var s=SK.filter(function(x){return x.id===id})[0];return s.e+s.n}).join("、"):'')+'<br>今天已玩 '+dayMin()+' 分鐘')+'</div><div class="act"><button class="b ok" data-a="tagain">再來一回 Again</button><button class="b g" data-a="train">回訓練場</button><button class="b g" data-a="close">回地圖 Map</button></div></div>';
+ var h='<div class="res">'+owl("happy","owl")+'<h2>這一回完成了！</h2>'+(TR.daily&&TR.idx>=TR.count?'<div class="lvup">🔥 每日挑戰完成！連續 '+num("dc_streak")+' 天</div>':'')+'<div class="tip">'+(TR.open?'你想了 <b>'+TR.count+'</b> 個問題，每個想法都收進「思考日記」了。':'自己想出來：<b>'+good+'</b> / '+TR.count+(TR.up.length?'<br>升級：'+TR.up.map(function(id){var s=SK.filter(function(x){return x.id===id})[0];return s.e+s.n}).join("、"):'')+'<br>今天已玩 '+dayMin()+' 分鐘')+'</div><div class="act"><button class="b ok" data-a="tagain">再來一回 Again</button><button class="b g" data-a="train">回訓練場</button><button class="b g" data-a="close">回地圖 Map</button></div></div>';
  openP(h);
 }
 /* ---------- 開放問題 ---------- */
@@ -815,7 +876,7 @@ function disDone(){
  if(r.length<4){toast("請寫下你的答案和理由（至少一點點）");return}
  diaryAdd({t:Q.q.t,q:Q.q.q,std:Q.q.o[Q.q.a],r:r,x:dis.type});sGood();
  toast("已存進思考日記，謝謝你！");
- if(Q.kind==="stage"){ST.idx++;if(ST.idx>=3)stageEnd();else stageQ()}else{TR.idx++;trainNext()}
+ if(Q.kind==="stage"){ST.idx++;if(ST.idx>=ST.n)stageEnd();else stageQ()}else{TR.idx++;trainNext()}
 }
 /* ---------- 密碼島 ---------- */
 function pgs(i){var c=CL[i];return '<div class="peg" style="background:'+c.c+'">'+c.s+'</div>'}
@@ -876,7 +937,7 @@ function codeGo(){
  drawCode();
 }
 function codeEnd(ok){
- var L=LV[cs.lv],n=cs.hist.length,i=cs.lv,st=0,nx=i+1<6;
+ var L=LV[cs.lv],n=cs.hist.length,i=cs.lv,st=0,nx=i+1<WORLDS.code.ns;
  var ans='<div class="pegs" style="justify-content:center;margin:.5rem 0">'+cs.secret.map(pgs).join('')+'</div>';
  var tip=CTIPS[Math.floor(Math.random()*CTIPS.length)];
  if(ok){
@@ -891,12 +952,13 @@ function codeEnd(ok){
 function parentGuide(){
  var h='<div class="top"><b>👪 給爸媽：每個技能怎麼聊</b><button class="b g sm" data-a="close">關閉</button></div><p class="note">孩子卡住時，先問下面的問題，不要直接給答案。等級說明：Level 1 約低年級，Level 10 約國中進階到高中入門（還在持續擴充）。孩子的答案和標準答案不同時，請先問「你是怎麼想到的？」。</p>';
  PG.forEach(function(p){var s=SK.filter(function(x){return x.id===p.id})[0];h+='<h3>'+s.e+' '+s.n+'</h3><p>'+p.d+'</p><ul>'+p.q.map(function(x){return '<li>'+x+'</li>'}).join("")+'</ul>'});
+ h+='<h3>⛲ 社區廣場</h3><p>用小故事練習人際相處：換位思考、說出感受、拒絕、求助。沒有標準答案，但有比較好的做法。請孩子說「如果是我，我會…」。</p><ul><li>這個人現在可能有什麼感覺？</li><li>你可以怎麼說，讓他聽得進去？</li><li>如果覺得不安全，你可以找誰幫忙？</li></ul>';
  openP(h);
 }
 function profile(){
  var n=P.replace("_",""),h='<div class="top"><b>'+hero.e+' '+n+' 的檔案</b><button class="b g sm" data-a="close">關閉</button></div>';
  if(!storageOK)h+='<div class="msg show bad">⚠️ 這個瀏覽器無法儲存進度（可能是無痕模式）。關掉頁面進度就會消失。</div>';
- h+='<p>⭐ '+totalStars()+'　稱號：<b>'+rank()+'</b>　🔥 連續 '+streakDays()+' 天玩滿 1 小時</p><div class="act"><button class="b blue sm" data-a="pguide">👪 給爸媽：每個技能怎麼聊</button></div><h3>🏛️ 訓練場等級</h3><ul>';
+ h+='<p>⭐ '+totalStars()+'　稱號：<b>'+rank()+'</b>　🔥 連續 '+streakDays()+' 天玩滿 1 小時</p><div class="act"><button class="b blue sm" data-a="pguide">👪 給爸媽：每個技能怎麼聊</button></div>'+badgeHtml()+'<h3>🏛️ 訓練場等級</h3><ul>';
  SK.forEach(function(k){var cn=num("sk_n_"+k.id);h+='<li>'+k.e+' '+k.n+'：Level '+lvOf(k.id)+(cn?'（自己答對 '+num("sk_ok_"+k.id)+' / '+cn+'）':'')+(sg("stuck_"+k.id)?'<br><small>最近卡住：'+String(sg("stuck_"+k.id)).replace(/</g,"&lt;")+'</small>':'')+'</li>'});
  h+='</ul><h3>⏱ 最近 7 天（分鐘）</h3><p>';
  var d=new Date(),days=[];for(var i=0;i<7;i++){days.unshift(Math.floor(num(dayKey(new Date(d.getTime()-864e5*i)))/60))}
@@ -922,6 +984,90 @@ function importAll(t){
  Object.keys(j.data).forEach(function(k){if(/^(波妞|Hana|Joy)_/.test(k)&&j.data[k]!==null){mem[k]=String(j.data[k]);try{localStorage.setItem(k,String(j.data[k]))}catch(e){}}});
  return true;
 }
+/* ---------- 社區廣場：人際與社會的小故事（沒有標準答案，但有比較好的做法） ---------- */
+var SCN=[[
+ {s:"大家在排隊玩溜滑梯，你前面還有 3 個人，你很想趕快玩。",o:[["乖乖排隊，等輪到我","good","排隊讓每個人都公平，你很快也會輪到。"],["跟前面的人說：「可以讓我先嗎？」","ok","可以禮貌地問，但對方可以說不。如果他說不要，你還是要排隊。"],["擠到最前面去","risk","插隊會讓後面的人不開心，也可能吵起來。"]]},
+ {s:"你借了同學的橡皮擦，不小心把它弄斷了。",o:[["馬上告訴他：「對不起，我不小心弄斷了」","good","誠實說出來、說對不起，對方知道你不是故意的，也比較容易原諒你。"],["假裝什麼事都沒發生，還給他","risk","他發現時會更生氣，也不會再相信你。"],["自己偷偷買一個一樣的還他","ok","補償是好方法，但還是要告訴他發生了什麼事。"]]},
+ {s:"你想加入一群同學玩遊戲，有人說：「我們不要你。」",o:[["說：「我覺得很難過，你們可以讓我加入嗎？」","good","說出自己的感受，也提出請求，是很勇敢的做法。"],["生氣地罵他們","risk","罵人會讓事情變得更糟。"],["走開，去找別的朋友玩，或告訴老師","ok","離開不開心的地方也可以。如果一直被排擠，要告訴老師。"]]},
+ {s:"你有一包餅乾，旁邊的好朋友今天沒帶點心。",o:[["分一些給他","good","分享會讓朋友開心，友誼也變得更好。"],["問他：「你要不要一起吃？」","good","主動問問，是很好的做法。"],["自己吃完，假裝沒看到","risk","朋友會覺得難過，你也可能不好意思。"]]},
+ {s:"好朋友考試考不好，一個人在座位上哭。",o:[["坐在他旁邊，問：「你還好嗎？」","good","陪伴和關心，常常就是最好的安慰。"],["跟其他同學一起笑他","risk","嘲笑會讓他更難過。"],["假裝沒看見，去玩","ok","有時候他想自己安靜一下，但問一句「你還好嗎」會更好。"]]},
+ {s:"有同學一直拍你的頭，你覺得很不舒服。",o:[["對他說：「請你停下來，我不喜歡這樣。」","good","清楚說出你的感受和要求，是保護自己的好方法。"],["拍回去，比他更大力","risk","用拍回去解決，可能讓兩個人都受傷。"],["都不說，忍耐","ok","如果他停不下來，要告訴老師或大人，不用一個人忍耐。"]]},
+ {s:"跑步的時候，你不小心撞到同學，他跌倒了。",o:[["趕快扶他起來，說對不起","good","先關心他有沒有受傷，再道歉，是負責任的做法。"],["繼續跑，假裝不知道","risk","他可能受傷了，這樣會讓他很難過。"],["說：「是你自己站在那裡！」","risk","怪別人，只會讓大家更生氣。先關心受傷的人。"]]},
+ {s:"你看到有同學因為名字被別人取笑，他低著頭。",o:[["走過去陪他，並告訴取笑的人這樣不好","good","勇敢的旁觀者，可以讓被取笑的人不孤單。"],["告訴老師","good","找大人幫忙，是正確又安全的做法。"],["跟著笑","risk","跟著笑，會讓他更難過，你也變成傷害他的人。"]]}
+],[
+ {s:"小組報告，有一個同學都不做事，其他人很生氣。",o:[["私下問他：「你有什麼困難嗎？我們需要你幫忙。」","good","先了解原因，再一起想辦法，常常能解決問題。"],["在全班面前罵他偷懶","risk","公開罵人會傷到他，也不會讓他更想做事。"],["自己全部做完，什麼都不說","ok","自己扛下所有事很累，也不公平。還是要把你的感受說出來。"]]},
+ {s:"好朋友偷偷告訴你一個秘密，說「不要告訴任何人」。另一個同學一直問你。",o:[["告訴他：「這是朋友的秘密，我不能說。」","good","遵守約定，朋友才會信任你。（但如果秘密是「有人會受傷」，就要告訴大人。）"],["暗示一點點，不說全部","risk","暗示也是洩漏，朋友可能受傷。"],["說出去，因為別人一直問","risk","因為壓力就說出秘密，朋友以後不敢再告訴你任何事。"]]},
+ {s:"考試的時候，旁邊的同學一直偷看你的答案。",o:[["用手稍微擋一下，考完再告訴老師","good","保護自己的答案，也讓老師知道，是公平的做法。"],["故意寫錯答案，讓他抄錯","risk","這樣你自己也會被扣分，而且不誠實。"],["大聲說他作弊","ok","指出問題可以，但大聲會讓全班都知道，私下告訴老師更好。"]]},
+ {s:"好幾個同學一起笑一個同學的鞋子很舊，叫你也一起笑。",o:[["說：「這樣不好笑。」並走開","good","不跟著做不對的事，需要勇氣。"],["跟著笑，因為大家都在笑","risk","「大家都這樣」不代表這樣是對的。"],["不說話，但心裡覺得不舒服","ok","你的感覺是對的，下次可以試著勇敢說出來。"]]},
+ {s:"玩遊戲輸了，你覺得好生氣，想把東西丟掉。",o:[["深呼吸，數到十，再說：「我輸了，好不甘心，但下次再來。」","good","先讓情緒平靜，再說出感受，是很成熟的做法。"],["把東西丟掉，說不玩了","risk","亂丟東西會傷到人或壞東西，朋友也會不想跟你玩。"],["說對手作弊","risk","沒有證據就說別人作弊，會傷害友誼。"]]},
+ {s:"分組活動，你沒有被任何人選到，一個人站在旁邊。",o:[["問老師：「我可以加入哪一組嗎？」","good","主動找大人幫忙，是很好的辦法。"],["自己走去問一組：「我可以加入嗎？」","good","勇敢開口，通常比你想的容易。"],["假裝不在意，走開","ok","難過的時候，可以找信任的人聊聊。"]]},
+ {s:"班上來了一個新同學，午餐時一個人坐著吃飯。",o:[["邀請他：「你要跟我們一起坐嗎？」","good","主動邀請，會讓新同學感到被歡迎。"],["不管他，因為我又不認識他","ok","每個人都有第一次，你的一句話可以幫很大的忙。"],["跟大家說他看起來怪怪的","risk","還沒認識就下結論，會讓他更孤單。"]]},
+ {s:"朋友常向你借零用錢，好幾次都沒有還。",o:[["說：「我需要這筆錢，你什麼時候可以還我？」","good","清楚說出你的需要，才能保護自己和友誼。"],["什麼都不說，繼續借他","risk","一直借出去，你會越來越不開心，朋友也不知道你的感受。"],["以後都不跟他說話","ok","保持距離也是方法，但先好好談談，也許能解決。"]]}
+],[
+ {s:"班級群組裡，有人一直傳訊息嘲笑一個同學，大家都按讚。",o:[["不按讚，私下關心被嘲笑的同學，並告訴老師或家長","good","不參與、關心受害者、找大人幫忙，三件事都很重要。"],["按讚，因為不想被排擠","risk","按讚就是在支持傷害別人。"],["退出群組，不管這件事","ok","保護自己沒有錯，但被嘲笑的同學還是需要有人幫忙。"]]},
+ {s:"遊戲裡有一個陌生人，問你的學校名稱和住址，說要寄禮物給你。",o:[["不回答，告訴爸媽或老師","good","不要把個人資料給網路上的陌生人，這是保護自己的重要規則。"],["說出學校，但不說住址","risk","只說學校，別人也可能找到你。"],["給他，因為禮物很吸引人","risk","免費的禮物，可能是騙局或危險的開始。"]]},
+ {s:"朋友請你幫他對老師說謊：「他昨天在你家寫功課。」",o:[["說：「我不想說謊，但我可以幫你想別的辦法。」","good","拒絕說謊，同時願意幫忙，是真正的朋友。"],["幫他說謊，因為他是朋友","risk","說謊可能讓兩個人都有麻煩，也會失去老師的信任。"],["直接告訴老師真相","ok","誠實沒錯，但先給朋友機會自己說，會更好。"]]},
+ {s:"班會要用投票決定「每天由誰打掃廁所」。多數同學想選一位不受歡迎的同學。",o:[["提出：「應該輪流，大家都公平。」","good","多數決不代表公平，保護少數人也很重要。"],["投票給他，因為大家都這樣","risk","多數人同意，也不一定公平。"],["不投票，什麼都不說","ok","不說話，不公平的事就會發生。你的意見很重要。"]]},
+ {s:"朋友說：「店裡沒人看到，我們拿一顆糖就好。」",o:[["說：「不行，那是別人的東西」，並離開","good","不因為朋友壓力做不對的事，是很勇敢的決定。"],["勸朋友也放回去","good","你可以一起幫朋友做對的選擇。"],["跟著拿，因為只有一顆","risk","不管多小，沒付錢就拿，就是偷。"]]},
+ {s:"老師以為是你拿了同學的東西，其實不是你。",o:[["冷靜地說：「老師，我沒有拿，我可以說明嗎？」","good","冷靜說明事實，比生氣更容易被相信。"],["大聲吵：「不是我！你冤枉我！」","risk","情緒太激動，別人更難聽進你的話。"],["默默承認，快點結束","risk","承認沒做的事，對你不公平，也讓真正的事情沒被解決。"]]},
+ {s:"同學說：「我們用 AI 寫全部的作業，再互相抄就好。」",o:[["說：「AI 可以幫我們想，但作業要自己寫。」","good","工具可以幫忙，但學習要靠自己，否則考試時會發現自己不會。"],["同意，這樣最快","risk","你會錯過學習，被發現時也會有麻煩。"],["告訴老師","ok","這是一個選項，但先和同學好好談，也許可以改變他的想法。"]]},
+ {s:"朋友最近很不開心，說不想來學校，也不想說原因。",o:[["說：「我在這裡，你想說的時候我都會聽。」，並鼓勵他告訴信任的大人","good","陪伴、傾聽，並讓信任的大人知道，是很重要的支持。"],["說：「想太多了，開心一點啦！」","risk","這樣說會讓他覺得不被理解。"],["不理他，讓他自己安靜","ok","給空間可以，但要讓他知道你關心他。"]]}
+]];
+var seenS={};
+function pickScenes(n){var t=tier(),pool=SCN[t],idx=pool.map(function(_,i){return i}).sort(function(a,b){return (seenS[t+"_"+a]||0)-(seenS[t+"_"+b]||0)||Math.random()-.5}).slice(0,n);idx.forEach(function(i){seenS[t+"_"+i]=(seenS[t+"_"+i]||0)+1});return idx.map(function(i){return pool[i]})}
+function sceneRun(i){ST={w:"plaza",i:i,idx:0,credit:0,n:3,scenes:pickScenes(3),kind:"scene"};ctx.w="plaza";sceneShow()}
+function sceneHead(){var d="";for(var i=0;i<ST.n;i++)d+='<i class="'+(i<ST.idx?'on':i===ST.idx?'cur':'')+'"></i>';return '<div class="top"><button class="b g sm" data-a="menu">← 返回 Back</button><b>⛲ 第 '+(ST.i+1)+' 關</b><span class="dots">'+d+'</span></div>'}
+function sceneShow(){
+ var sc=ST.scenes[ST.idx],h;ST.opts=shuf(sc.o);
+ h=sceneHead()+'<div class="qrow"><div class="q">'+sc.s+'</div><button class="b g sm" data-a="sread" aria-label="讀給我聽">🔊</button></div><p class="note">選一個你「真的會做」的。這裡沒有標準答案，但有的做法比較好。</p><div class="opts">';
+ ST.opts.forEach(function(o,k){h+='<button class="b g" data-a="sopt" data-v="'+k+'">'+String.fromCharCode(65+k)+'．'+o[0]+'</button>'});
+ openP(h+'</div>');
+}
+var SCR={good:["👍 好主意",1],ok:["🤔 可以，但是…",.6],risk:["⚠️ 小心",.35]};
+function sceneChoose(k){
+ var o=ST.opts[k],sc=ST.scenes[ST.idx],r=SCR[o[1]],goods=sc.o.filter(function(x){return x[1]==="good"&&x!==o}),h;
+ ST.credit+=r[1];if(o[1]==="good")sGood();else sfx(330,.2,"triangle");
+ h=sceneHead()+'<div class="q" style="font-size:1.05rem;color:var(--mute)">'+sc.s+'</div><div class="tip"><b>你選了：</b>'+o[0]+'<br><br><b>'+r[0]+'</b><br>'+o[2]+'</div>';
+ if(o[1]!=="good"&&goods.length)h+='<div class="tip"><b>更好的做法：</b><br>'+goods.map(function(x){return '• '+x[0]+'<br><small>'+x[2]+'</small>'}).join("<br>")+'</div>';
+ h+='<p class="note">想一想：你還有別的辦法嗎？寫下來（可以不寫）。</p><textarea id="sx" rows="3" placeholder="我會……"></textarea><div class="act"><button class="b ok" data-a="snext">'+(ST.idx>=ST.n-1?"完成這一關 Finish":"下一個故事 Next →")+'</button></div>';
+ openP(h);
+}
+function sceneNext(){var el=$("sx"),r=el?el.value.trim():"";if(r)diaryAdd({t:"社區廣場",q:ST.scenes[ST.idx].s,r:r});ST.idx++;if(ST.idx>=ST.n)stageEnd();else sceneShow()}
+/* ---------- 騙人村小筆記 ---------- */
+function nbHtml(){
+ Q.nb=Q.nb||{};var h='<div class="note nbk"><b>📝 小筆記（只有你看得到，不會計分）</b>';
+ Q.q.names.forEach(function(n,i){h+='<div class="nbrow"><span>'+n+'</span><button class="chip'+(Q.nb[i]===1?' on':'')+'" data-a="nb" data-i="'+i+'" data-s="1">誠實村</button><button class="chip'+(Q.nb[i]===2?' on':'')+'" data-a="nb" data-i="'+i+'" data-s="2">騙人村</button></div>'});
+ return h+'</div>';
+}
+/* ---------- 丟硬幣實驗 ---------- */
+function coinFlip(n){var h=0,i,o=$("coinout");for(i=0;i<n;i++){if(Math.random()<.5)h++}Q.coin=Q.coin||[];Q.coin.push('丟 '+n+' 次：正面 '+h+' 次（'+Math.round(h/n*100)+'%）');if(o)o.innerHTML=Q.coin.slice(-5).join("<br>");sTap()}
+/* ---------- 每日挑戰 ---------- */
+function todayStr(){var d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()}
+function hashStr(s){var h=2166136261,i;for(i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function dcStart(){
+ if(sg("dc_last")===todayStr()){openP('<div class="res">'+owl("happy","owl")+'<h2>今天的挑戰完成了！</h2><div class="tip">🔥 連續 '+num("dc_streak")+' 天。明天再來！<br>想繼續練習，可以去訓練場。</div><div class="act"><button class="b ok" data-a="train">去訓練場</button><button class="b g" data-a="close">回地圖 Map</button></div></div>');return}
+ seedRNG(hashStr(P+todayStr()));
+ var list=[],i;
+ for(i=0;i<5;i++){var sk=SK[R(0,SK.length-1)],lv=lvOf(sk.id);list.push({sk:sk,lv:lv,q:sk.g(lv)})}
+ unseedRNG();
+ TR={ids:SK.map(function(s){return s.id}),count:5,idx:0,ok:0,up:[],down:0,daily:true,list:list};trainNext();
+}
+function dcFinish(){
+ var y=new Date(Date.now()-864e5),ys=y.getFullYear()+"-"+(y.getMonth()+1)+"-"+y.getDate(),last=sg("dc_last");
+ ss("dc_streak",last===ys?num("dc_streak")+1:1);ss("dc_last",todayStr());ss("dc_n",num("dc_n")+1);
+}
+/* ---------- 徽章 ---------- */
+function badgeList(){
+ var ts=totalStars(),mx=0,boss=false,allL3=SK.every(function(s){return lvOf(s.id)>=3});
+ SK.forEach(function(s){mx=Math.max(mx,lvOf(s.id))});
+ Object.keys(WORLDS).forEach(function(w){var W=WORLDS[w];if(W.boss&&stars(w,W.ns-1)>=2)boss=true});
+ return [["🌱","第一顆星",ts>=1],["⭐","10 顆星",ts>=10],["🌟","30 顆星",ts>=30],["🏆","60 顆星",ts>=60],["💎","100 顆星",ts>=100],
+  ["🎯","自己想出來 50 題",num("sk_ok_all")>=50],["🧠","自己想出來 200 題",num("sk_ok_all")>=200],["🌈","想了 10 個開放問題",num("op_n")>=10],
+  ["🔥","每日挑戰連續 3 天",num("dc_streak")>=3],["📅","每日挑戰 10 次",num("dc_n")>=10],["📈","有技能到 Level 5",mx>=5],["🚀","有技能到 Level 8",mx>=8],
+  ["🧭","每個技能都到 Level 3",allL3],["👑","打敗一個魔王關",boss]];
+}
+function badgeHtml(){var b=badgeList();return '<h3>🏅 徽章（'+b.filter(function(x){return x[2]}).length+' / '+b.length+'）</h3><div class="gl">'+b.map(function(x){return '<span class="chip" style="'+(x[2]?'':'opacity:.35;filter:grayscale(1)')+'">'+x[0]+' '+x[1]+'</span>'}).join("")+'</div>'}
+
 /* ---------- 事件 ---------- */
 ovp.addEventListener("click",function(e){
  var t=e.target.closest("[data-a]");if(!t)return;
@@ -935,7 +1081,12 @@ ovp.addEventListener("click",function(e){
  if(a==="tut"){showTut();return}
  if(a==="say"){say(t.dataset.w);return}
  if(a==="pguide"){parentGuide();return}
- if(a==="read"){say(Q.q.q,"zh-TW");return}
+ if(a==="nb"){var ni=+t.dataset.i,ns2=+t.dataset.s;Q.nb[ni]=(Q.nb[ni]===ns2)?0:ns2;t.parentNode.querySelectorAll(".chip").forEach(function(c){c.classList.toggle("on",+c.dataset.s===Q.nb[ni])});return}
+ if(a==="coin"){coinFlip(v);return}
+ if(a==="sopt"){sceneChoose(v);return}
+ if(a==="snext"){sceneNext();return}
+ if(a==="sread"){say(ST.scenes[ST.idx].s,"zh-TW");return}
+ if(a==="read"){say(Q.q.q.replace(/<[^>]+>/g," "),"zh-TW");return}
  if(a==="qsub"){qSub();return}
  if(a==="qopt"){qOpt(v);return}
  if(a==="qhint"){qHint();return}
@@ -980,6 +1131,7 @@ $("path").addEventListener("click",function(e){
  var k=t.dataset.n;sTap();
  if(k==="camp")trainMenu();else if(k==="open")tStart([],5,true);else if(WORLDS[k])menu(k);
 });
+$("bdc").onclick=function(){sTap();dcStart()};
 $("bdaily").onclick=function(){sTap();tStart(SK.map(function(k){return k.id}),10)};
 document.querySelectorAll("[data-p]").forEach(function(b){b.onclick=function(){
  var n=b.dataset.p;P=n+"_";hero=HERO[n];sTap();showHome();toast("歡迎，"+n+"！")}});
