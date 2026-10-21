@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"></head><body><title>邏輯冒險島</title>
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><meta name="apple-mobile-web-app-capable" content="yes"></head><body><title>邏輯冒險島</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
 :root{color-scheme:light;
@@ -120,7 +120,9 @@ body.mapon #ov{background:rgba(20,25,50,.55);backdrop-filter:blur(2px)}
 #qtask.dim{opacity:.75}#qtask{font-size:1.05rem}
 .lvflash{position:fixed;inset:0;background:#fff;pointer-events:none;animation:lvf .7s ease-out forwards;z-index:30}@keyframes lvf{from{opacity:.85}to{opacity:0}}
 html,body{overscroll-behavior:none}
-body.mapon{overflow:hidden!important;position:fixed;width:100%;height:100%}
+html.mapon{overflow:hidden!important;height:100%;position:fixed;width:100%}
+body.mapon{overflow:hidden!important;position:fixed;top:0;left:0;width:100%;height:100%;touch-action:none}
+#qm,#qc,#qhud{touch-action:none}
 #qm{overscroll-behavior:none;-webkit-touch-callout:none;position:fixed;inset:0;z-index:15;background:#1b2340;touch-action:none;user-select:none;-webkit-user-select:none}
 #qc{display:block;touch-action:none}
 #qhud .qtr>div{white-space:nowrap}#qhud{position:absolute;inset:0;pointer-events:none;color:#fff;font-weight:800}
@@ -9136,7 +9138,7 @@ function spawnAll(){
 /* ---------- 開啟地圖 ---------- */
 function showHome(){if(MAPMODE)openMap();else showHomeList()}
 function openMap(){
- $("pick").hidden=true;$("home").hidden=true;$("qm").hidden=false;QM.on=true;document.body.classList.add("mapon");document.body.style.overflow="hidden";
+ $("pick").hidden=true;$("home").hidden=true;$("qm").hidden=false;QM.on=true;document.body.classList.add("mapon");document.documentElement.classList.add("mapon");try{window.scrollTo(0,0)}catch(e){}document.body.style.overflow="hidden";
  if(!MP.ok)buildMap();
  if(!QM.ready){QM.seen=new Uint8Array(WW*WH);try{var sv=sg("q_seen")||"";if(sv.length===WW*WH)for(var si=0;si<sv.length;si++)QM.seen[si]=sv.charCodeAt(si)===49?1:0}catch(e){}spawnAll();QM.ready=true;QM.hearts=maxHearts();QM.px=28.5;QM.py=19.5;QM.pend=qn("pend");QM.monthFlag=0;QM.bossWon=0;QM.streak=0;QM.B=null;QM.cur=null;QM.tcool=0;QM.inC=null;QM.keys={};QM.joy=null;FX.length=0}
  if(QM.hearts>maxHearts())QM.hearts=maxHearts();
@@ -9145,7 +9147,7 @@ function openMap(){
  if(!qn("tut")){tutorial();return}
  if(QM.pend>0){perkPanel();return}
  if(!QM.loop){QM.last=performance.now();QM.loop=true;requestAnimationFrame(frame)}}
-function stopMap(){QM.on=false;$("qm").hidden=true;document.body.classList.remove("mapon");document.body.style.overflow=""}
+function stopMap(){QM.on=false;$("qm").hidden=true;document.body.classList.remove("mapon");document.documentElement.classList.remove("mapon");document.body.style.overflow=""}
 
 
 /* ---------- 畫面與輸入 ---------- */
@@ -9166,6 +9168,10 @@ window.addEventListener("keyup",function(e){var k=e.key.toLowerCase();delete QM.
 /* 地圖開著時，手指往下滑不要拉動整個頁面（iOS 橡皮筋、Android 下拉重新整理） */
 var qmEl=$("qm");
 qmEl.addEventListener("touchmove",function(e){e.preventDefault()},{passive:false});
+/* iPhone Safari：地圖開著時，整頁任何地方（除了面板內）都不准被手指拉動、縮放 */
+document.addEventListener("touchmove",function(e){if(!QM.on)return;var t=e.target;if(t&&t.closest&&t.closest("#ov"))return;e.preventDefault()},{passive:false});
+["gesturestart","gesturechange","gestureend"].forEach(function(g){document.addEventListener(g,function(e){if(QM.on)e.preventDefault()})});
+window.addEventListener("scroll",function(){if(QM.on&&(window.scrollY||window.pageYOffset))window.scrollTo(0,0)});
 qmEl.addEventListener("contextmenu",function(e){e.preventDefault()});
 cv.addEventListener("pointerdown",function(e){if(inputOff())return;QM.joy={id:e.pointerId,x0:e.clientX,y0:e.clientY,x:e.clientX,y:e.clientY};try{cv.setPointerCapture(e.pointerId)}catch(er){}e.preventDefault()});
 cv.addEventListener("pointermove",function(e){if(QM.joy&&QM.joy.id===e.pointerId){QM.joy.x=e.clientX;QM.joy.y=e.clientY}});
